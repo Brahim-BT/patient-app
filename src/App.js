@@ -5,7 +5,12 @@ import { nanoid } from 'nanoid';
 
 function App() {
 
-  const [patientList, setPatientList] = useState([]);
+  const getPatientList = () => {
+    const patientList = localStorage.getItem("patientList")
+    return patientList ? JSON.parse(patientList) : [];
+  }
+
+  const [patientList, setPatientList] = useState(getPatientList());
   const [roomNum, setRoomNum] = useState();
   const [entreeNum, setEntreeNum] = useState();
   const [fullName, setFullName] = useState();
@@ -22,7 +27,8 @@ function App() {
     if (!isNaN(hourVal) && !isNaN(volume) && selectTorD === 'Time' && selectSorB === 'Serum') setResult((volume / (3 * hourVal)).toFixed(2))
     if (!isNaN(debit) && !isNaN(volume) && selectTorD === 'Debit' && selectSorB === 'Blood') setResult((volume / (4 * debit)).toFixed(2))
     if (!isNaN(hourVal) && !isNaN(volume) && selectTorD === 'Time' && selectSorB === 'Blood') setResult((volume / (4 * hourVal)).toFixed(2))
-  }, [debit, volume, hourVal, selectTorD, selectSorB]);
+    localStorage.setItem("patientList", JSON.stringify(patientList));
+  }, [debit, volume, hourVal, selectTorD, selectSorB, patientList, result, setResult]);
 
   const handleVolumeChange = (e) => {
     setVolume(e.target.value);
@@ -68,14 +74,30 @@ function App() {
 
   const addPatient = (e) => {
     e.preventDefault();
-    const newTask = {
+    const newPatient = {
       id: nanoid(),
       fullname: fullName,
       roomnumber: roomNum,
       entreenumber: entreeNum,
-      hour: hourVal,
+      type: selectSorB,
+      hour: getHours(result),
       time: getTimeFromHours(result)
     };
+    setResult(0)
+    setHourVal(0)
+    setPatientList([...patientList, newPatient])
+    setIsOpen(false)
+  }
+
+  function getHours(h) {
+    const ms = h * 60 * 60 * 1000;
+    const date = new Date();
+    date.setTime(ms);
+
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${hours}:${minutes}`;
   }
 
   function getTimeFromHours(h) {
@@ -97,6 +119,34 @@ function App() {
 
   return (
     <div className="App">
+      <table className='shadow-2xl border-2 border-collapse border-green-200 w-full table-auto'>
+        <thead className=' text-white'>
+          <tr>
+            <th className='bg-green-800 py-3'>full Name</th>
+            <th className='bg-green-800 py-3'>Room Number</th>
+            <th className='bg-green-800 py-3'>Entry Number</th>
+            <th className='bg-green-800 py-3'>Type</th>
+            <th className='bg-green-800 py-3'>Hours Amount</th>
+            <th className='bg-green-800 py-3'>Will end in</th>
+          </tr>
+        </thead>
+        <tbody className='text-green-900 text-center'>
+          {
+            patientList.map(patient => {
+              return (
+                <tr className='hover:bg-green-100 bg-green-200 cursor-pointer duration-300' key={patient.id}>
+                    <td className=' py-3 px-3'>{patient.fullname}</td>
+                    <td className=' py-3 px-3'>{patient.roomnumber}</td>
+                    <td className=' py-3 px-3'>{patient.entreenumber}</td>
+                    <td className=' py-3 px-3'>{patient.type}</td>
+                    <td className=' py-3 px-3'>{patient.hour}</td>
+                    <td className=' py-3 px-3'>{patient.time}</td>
+                </tr>
+              )
+            })
+          }
+        </tbody>
+      </table>
       <div>
         <div className="fixed bottom-0 right-0 mb-4 mr-4">
           <button
@@ -115,7 +165,7 @@ function App() {
               X
             </button>
           </div>
-          <form>
+          <form onSubmit={addPatient}>
             <div className='grid grid-cols-2 gap-x-5 gap-y-5 mb-14'>
               <div className='col-span-2'>
                 <label>Full Name : </label>
@@ -164,7 +214,7 @@ function App() {
 
                 }
               </div>
-              <button className='w-full inline-flex justify-center rounded-full border border-transparent shadow-sm px-3 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:ml-3 sm:w-auto sm:text-sm' type={'submit'} onSubmit={addPatient} >Add Patient</button>
+              <button className='w-full inline-flex justify-center rounded-full border border-transparent shadow-sm px-3 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:ml-3 sm:w-auto sm:text-sm' type={'submit'}>Add Patient</button>
             </div>
           </form>
           <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
