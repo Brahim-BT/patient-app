@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Modal = ({ isOpen, onClose, children }) => {
-    if (!isOpen) return null;
+const ClearAllModal = ({ isClearAllModalOpen, onClose, children }) => {
+    if (!isClearAllModalOpen) return null;
 
     return (
         <div className="fixed z-10 inset-0 overflow-y-auto">
@@ -22,4 +22,4 @@ const Modal = ({ isOpen, onClose, children }) => {
     );
 };
 
-export default Modal;
+export default ClearAllModal;
