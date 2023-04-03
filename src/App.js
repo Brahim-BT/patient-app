@@ -136,6 +136,11 @@ function App() {
   const clearPatientList = () => {
     setPatientList([]);
   }
+  const deletePatient=(id) => {
+    setPatientList(patientList.filter((patient) => {
+      return patient.id !== id
+    }))
+  }
 
   return (
     <div className="App">
@@ -149,6 +154,7 @@ function App() {
             <th className='bg-green-800 py-3'>Hours Amount</th>
             <th className='bg-green-800 py-3'>Will end in</th>
             <th className='bg-green-800 py-3'>Drop/min</th>
+            <th className='bg-green-800 py-3'></th>
           </tr>
         </thead>
         <tbody className='text-green-900 text-center'>
@@ -163,6 +169,7 @@ function App() {
                   <td className=' py-3 px-3'>{patient.hour}</td>
                   <td className=' py-3 px-3'>{patient.time}</td>
                   <td className=' py-3 px-3'>{patient.dropPerMinut}</td>
+                  <td className=' py-3 px-3'><button className='border bg-red-700 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-xl duration-300' onClick={() => {deletePatient(patient.id)}}>Delete</button></td>
                 </tr>
               )
             })

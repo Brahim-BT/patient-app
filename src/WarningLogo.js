@@ -5,7 +5,7 @@ const WarningLogo = () => {
 
                 <g id="SVGRepo_bgCarrier" stroke-width="0" transform="translate(1.5600000000000005,1.5600000000000005), scale(0.87)">
 
-                    <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="14.4" fill="#000000" strokewidth="0" />
+                    <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="14.4" fill="#000000" strokeWidth={"0"} />
 
                 </g>
 
